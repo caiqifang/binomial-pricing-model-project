@@ -41,16 +41,16 @@
 
 <p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.    </p>
 
-<p><img src="https://s13.postimg.org/zbbtnvgtv/Screen_Shot_2016_10_31_at_17_56_42.png" alt="">  </p>
+<p><img src="https://i.imgsafe.org/81b1057aaa.png" alt="">  </p>
 
 <p>Picture from Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. (In this case, the up factor and down factor (u and d) are fixed throughout time.)
 To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation          </p>
 
-<p><img src="https://s13.postimg.org/k1bygolbn/Screen_Shot_2016_10_31_at_18_18_15.png" alt=""> </p>
+<p><img src="https://i.imgsafe.org/81b0cbd8b0.png" alt=""> </p>
 
 <p>Where p and q are the risk-neutral probabilities given by            </p>
 
-<p><img src="https://s13.postimg.org/njnyd2m7n/Screen_Shot_2016_10_31_at_18_23_54.png" alt=""></p>
+<p><img src="https://i.imgsafe.org/81b096856a.png" alt=""></p>
 
 <p>We can draw some quick observations of this model. The price of each tree node depends on the price of its left and right children nodes and different parameters in the backward induction formula. Different path calculates its price using different children nodes, thus paths are independent of each other. This property allows us to parallelize the calculation of an N period binomial model, theoretically improving its performance from O(2^N) to O(N) time complexity. We will need to use some data to train and calibrate the binomial model and find the best parameters (u, d, r) before we can backward induct the current correct price of the security. If a trading system sees a difference between the market price and theoretical model price, it can further exam the situation and explore potential arbitrage in the mispriced security.</p>
 
