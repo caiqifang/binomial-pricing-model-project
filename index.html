@@ -1,34 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Parallel Computation of Binomial Security Pricing Model by caiqifang</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Parallel Computation of Binomial Security Pricing Model</h1>
-        <p></p>
+    <section class="page-header">
+      <h1 class="project-name">Parallel Computation of Binomial Security Pricing Model</h1>
+      <h2 class="project-tagline">CMU 15-418 Term Project</h2>
+      <a href="https://github.com/caiqifang/binomial-pricing-model-project" class="btn">View on GitHub</a>
+      <a href="https://github.com/caiqifang/binomial-pricing-model-project/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/caiqifang/binomial-pricing-model-project/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/caiqifang/binomial-pricing-model-project">View the Project on GitHub <small>caiqifang/binomial-pricing-model-project</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/caiqifang/binomial-pricing-model-project/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/caiqifang/binomial-pricing-model-project/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/caiqifang/binomial-pricing-model-project">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
+    <section class="main-content">
+      <h3>
 <a id="welcome" class="anchor" href="#welcome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome</h3>
 
 <p>Our goal of this project is to use parallel computing techniques to increase the calculating performance of binomial security pricing model. We will implement the project on Nvidia GPU platforms using CUDA API. In the end, we wish we can build a real-time program that reacts to changes in variables and returns the theoretical prices of securities. Hope this pricing engine can serve as the core of a black-box trading system.</p>
@@ -36,20 +27,66 @@
 <h3>
 <a id="background-information" class="anchor" href="#background-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Background Information</h3>
 
-<p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.</p>
+<p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.
+<img alt="">
+Picture from Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. (In this case, the up factor and down factor (u and d) are fixed throughout time.)</p>
+
+<p>To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation
+<img alt="">
+Where p and q are the risk-neutral probabilities given by
+<img alt="">
+We can draw some quick observations of this model. The price of each tree node depends on the price of its left and right children nodes and different parameters in the backward induction formula. Different path calculates its price using different children nodes, thus paths are independent of each other. This property allows us to parallelize the calculation of an N period binomial model, theoretically improving its performance from O(2^N) to O(N) time complexity. We will need to use some data to train and calibrate the binomial model and find the best parameters (u, d, r) before we can backward induct the current correct price of the security. If a trading system sees a difference between the market price and theoretical model price, it can further exam the situation and explore potential arbitrage in the mispriced security.</p>
+
+<h3>
+<a id="the-challenge" class="anchor" href="#the-challenge" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>THE CHALLENGE:</h3>
+
+<h1>
+<a id="problem-size--" class="anchor" href="#problem-size--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Problem Size -</h1>
+
+<p>The nature of the binomial model presents some difficulties. As the time period increases, the total nodes in the binomial tree grows exponentially. (Total of 2^N nodes) Initially, we are aiming to have a 30-period binomial model, but we need to do some math and computer science optimizations. There is simply no platform that can calculate and store the 2^30-level binomial tree.</p>
+
+<h1>
+<a id="memory-management--" class="anchor" href="#memory-management--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Memory Management -</h1>
+
+<p>Assume that each node only contains a single floating number, because we have 2^30 nodes in total, there will be no reasonable storage device that can store this much data. We need to find a way to compress, hash and even abandon duplicated information. At the same time, we will be accessing value in the memory frequently. There's no way we can fit everything in the cache, so we need to find a way to access data that best utilizing the GPU memory and cache.</p>
+
+<h1>
+<a id="smart-work-distribution--" class="anchor" href="#smart-work-distribution--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Smart Work Distribution -</h1>
+
+<p>All the security price calculation involves the backward induction equation. The calculation time does not vary too much. However, we still need to manage to distribute the calculate in a clever way to best utilize the GPU.</p>
+
+<h1>
+<a id="model-training--" class="anchor" href="#model-training--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Model Training -</h1>
+
+<p>For simplicity, we use the binomial pricing model with three variables (up factor u, down factor d, and interest rate r). At the beginning, we don't have a concrete idea about the value of different variables. First thing to do in the program is to use training data to tune the model and find the best fitting variable value. Only then we can use the variable to produce correct theoretical price. </p>
+
+<h1>
+<a id="time-speed--" class="anchor" href="#time-speed--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Time/ Speed -</h1>
+
+<p>One of the goals is to use this program as the pricing engine to a black-box trading system. This goal poses a significant challenge and has a strict time requirement. To catch the mispricing arbitrage opportunities in the market, the system needs to react to a variety of products and provide pricing suggestions almost in real time. We will try our best to speed up the program and see if we can complete calculation in single digit second or even less than a second.</p>
 
 <h3>
 <a id="resources" class="anchor" href="#resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resources</h3>
 
-<p>Computer Platform:
-CPU and Nvidia GPU platform (potential benefit from GPU parallel computing)
-Starter Code:
-As for now, we do not have any starter code. We plan to start from scratch.
-Coding Language:
-C/C++
-Textbook Reference:
-Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. Faculty Advisers:
-Dr. David Handron (CMU-21370)
+<h1>
+<a id="computer-platform" class="anchor" href="#computer-platform" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Computer Platform:</h1>
+
+<p>CPU and Nvidia GPU platform (potential benefit from GPU parallel computing)</p>
+
+<h1>
+<a id="coding-language" class="anchor" href="#coding-language" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Coding Language:</h1>
+
+<p>C/C++</p>
+
+<h1>
+<a id="textbook-reference" class="anchor" href="#textbook-reference" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Textbook Reference:</h1>
+
+<p>Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. </p>
+
+<h1>
+<a id="faculty-advisers" class="anchor" href="#faculty-advisers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Faculty Advisers:</h1>
+
+<p>Dr. David Handron (CMU-21370)
 Prof. William Hrusa (CMU-21378)
 Prof. Todd C. Mowry (CMU-15418)
 Prof. Brian Railing (CMU-15418)</p>
@@ -57,19 +94,21 @@ Prof. Brian Railing (CMU-15418)</p>
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-<p>You can @mention a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor’s GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Team Members: Qifang “Charlie” Cai (<a href="https://github.com/caiqifang" class="user-mention">@caiqifang</a>), Xiqiao Shan (<a href="https://github.com/firekarlshanxq" class="user-mention">@firekarlshanxq</a>)</p>
 
 <h3>
 <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
 
 <p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/caiqifang">caiqifang</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/caiqifang/binomial-pricing-model-project">Parallel Computation of Binomial Security Pricing Model</a> is maintained by <a href="https://github.com/caiqifang">caiqifang</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+    </section>
+
+  
   </body>
 </html>
