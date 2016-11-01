@@ -1,33 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Parallel Computation of Binomial Security Pricing Model by caiqifang</title>
+    <meta name="description" content="Parallel Computation of Binomial Security Pricing Model : CMU 15-418 Term Project">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Parallel Computation of Binomial Security Pricing Model</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Parallel Computation of Binomial Security Pricing Model</h1>
-        <p>CMU 15-418 Term Project</p>
 
-        <p class="view"><a href="https://github.com/caiqifang/binomial-pricing-model-project">View the Project on GitHub <small>caiqifang/binomial-pricing-model-project</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/caiqifang/binomial-pricing-model-project">View on GitHub</a>
 
+          <h1 id="project_title">Parallel Computation of Binomial Security Pricing Model</h1>
+          <h2 id="project_tagline">CMU 15-418 Term Project</h2>
 
-        <ul>
-          <li><a href="https://github.com/caiqifang/binomial-pricing-model-project/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/caiqifang/binomial-pricing-model-project/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/caiqifang/binomial-pricing-model-project">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/caiqifang/binomial-pricing-model-project/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/caiqifang/binomial-pricing-model-project/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h3>
 <a id="welcome" class="anchor" href="#welcome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome</h3>
 
@@ -38,14 +41,16 @@
 
 <p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.    </p>
 
-<p><img src="https://s18.postimg.org/8gkt3yxyt/Screen_Shot_2016_10_31_at_17_56_42.png" alt="">  </p>
+<p><img src="https://s13.postimg.org/zbbtnvgtv/Screen_Shot_2016_10_31_at_17_56_42.png" alt="">  </p>
 
 <p>Picture from Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. (In this case, the up factor and down factor (u and d) are fixed throughout time.)
 To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation          </p>
 
-<p>![eq2]: <a href="https://s18.postimg.org/vtiumhe2d/Screen_Shot_2016_10_31_at_18_18_15.png">https://s18.postimg.org/vtiumhe2d/Screen_Shot_2016_10_31_at_18_18_15.png</a> </p>
+<p><img src="https://s13.postimg.org/k1bygolbn/Screen_Shot_2016_10_31_at_18_18_15.png" alt=""> </p>
 
 <p>Where p and q are the risk-neutral probabilities given by            </p>
+
+<p><img src="https://s13.postimg.org/njnyd2m7n/Screen_Shot_2016_10_31_at_18_23_54.png" alt=""></p>
 
 <p>We can draw some quick observations of this model. The price of each tree node depends on the price of its left and right children nodes and different parameters in the backward induction formula. Different path calculates its price using different children nodes, thus paths are independent of each other. This property allows us to parallelize the calculation of an N period binomial model, theoretically improving its performance from O(2^N) to O(N) time complexity. We will need to use some data to train and calibrate the binomial model and find the best parameters (u, d, r) before we can backward induct the current correct price of the security. If a trading system sees a difference between the market price and theoretical model price, it can further exam the situation and explore potential arbitrage in the mispriced security.</p>
 
@@ -97,12 +102,17 @@ One of the goals is to use this program as the pricing engine to a black-box tra
 
 <p>Team Members: Qifang “Charlie” Cai (<a href="https://github.com/caiqifang" class="user-mention">@caiqifang</a>), Xiqiao Shan (<a href="https://github.com/firekarlshanxq" class="user-mention">@firekarlshanxq</a>)</p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/caiqifang">caiqifang</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Parallel Computation of Binomial Security Pricing Model maintained by <a href="https://github.com/caiqifang">caiqifang</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
+
   </body>
 </html>
