@@ -1,5 +1,5 @@
 ### Parallel Computation of Binomial Security Pricing Model
-Team Members: Qifang “Charlie” Cai (caiqifang), Xiqiao Shan (firekarlshanxq) 
+Team Members: Qifang “Charlie” Cai (caiqifang), Xiqiao Shan (firekarlshanxq)
 Web Page: https://caiqifang.github.io/binomial-pricing-model-project/
 
 ### SUMMARY :
