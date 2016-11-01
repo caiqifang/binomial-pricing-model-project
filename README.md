@@ -1,11 +1,11 @@
-## Parallel Computation of Binomial Security Pricing Model
-Team Members: Qifang “Charlie” Cai (caiqifang), Xiqiao Shan (xshan) 
+### Parallel Computation of Binomial Security Pricing Model
+Team Members: Qifang “Charlie” Cai (caiqifang), Xiqiao Shan (firekarlshanxq) 
 Web Page: https://caiqifang.github.io/binomial-pricing-model-project/
 
-## SUMMARY :
+### SUMMARY :
 Our goal of this project is to use parallel computing techniques to increase the calculating performance of binomial security pricing model. We will implement the project on Nvidia GPU platforms using CUDA API. In the end, we wish we can build a real-time program that reacts to changes in variables and returns the theoretical prices of securities. Hope this pricing engine can serve as the core of a black-box trading system.
 
-## RESOURCES:
+### RESOURCES:
 Computer Platform:
 CPU and Nvidia GPU platform (potential benefit from GPU parallel computing)
 Starter Code:
