@@ -36,18 +36,16 @@
 <h3>
 <a id="background-information" class="anchor" href="#background-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Background Information</h3>
 
-<p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.     </p>
+<p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.    </p>
 
-<p><img src="https://s18.postimg.org/8gkt3yxyt/Screen_Shot_2016_10_31_at_17_56_42.png" alt="eq1">     </p>
+<p><img src="https://s18.postimg.org/8gkt3yxyt/Screen_Shot_2016_10_31_at_17_56_42.png" alt="">  </p>
 
 <p>Picture from Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. (In this case, the up factor and down factor (u and d) are fixed throughout time.)
-To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation    </p>
+To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation          </p>
 
-<p><img src="https://s18.postimg.org/vtiumhe2d/Screen_Shot_2016_10_31_at_18_18_15.png" alt="eq2">    </p>
+<p>![eq2]: <a href="https://s18.postimg.org/vtiumhe2d/Screen_Shot_2016_10_31_at_18_18_15.png">https://s18.postimg.org/vtiumhe2d/Screen_Shot_2016_10_31_at_18_18_15.png</a> </p>
 
-<p>Where p and q are the risk-neutral probabilities given by    </p>
-
-<p><img src="https://s18.postimg.org/ymc26ieet/Screen_Shot_2016_10_31_at_18_23_54.png" alt="eq3">    </p>
+<p>Where p and q are the risk-neutral probabilities given by            </p>
 
 <p>We can draw some quick observations of this model. The price of each tree node depends on the price of its left and right children nodes and different parameters in the backward induction formula. Different path calculates its price using different children nodes, thus paths are independent of each other. This property allows us to parallelize the calculation of an N period binomial model, theoretically improving its performance from O(2^N) to O(N) time complexity. We will need to use some data to train and calibrate the binomial model and find the best parameters (u, d, r) before we can backward induct the current correct price of the security. If a trading system sees a difference between the market price and theoretical model price, it can further exam the situation and explore potential arbitrage in the mispriced security.</p>
 
@@ -86,10 +84,13 @@ One of the goals is to use this program as the pricing engine to a black-box tra
 
 <p><strong>Faculty Advisers</strong>:       </p>
 
-<p>Dr. David Handron (CMU-21370)
-Prof. William Hrusa (CMU-21378)
-Prof. Todd C. Mowry (CMU-15418)
-Prof. Brian Railing (CMU-15418)</p>
+<p>Dr. David Handron (CMU-21370)             </p>
+
+<p>Prof. William Hrusa (CMU-21378)         </p>
+
+<p>Prof. Todd C. Mowry (CMU-15418)        </p>
+
+<p>Prof. Brian Railing (CMU-15418)        </p>
 
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
