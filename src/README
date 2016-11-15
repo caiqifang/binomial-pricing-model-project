@@ -1,3 +1,11 @@
+model_s.h    |
+model_s.cpp  | -> class object of sequantial binomial model
+
+README | -> this file
+
+Makefile | -> compile file
+
+main.cpp | -> main
 
 
 
