@@ -15,8 +15,9 @@ class ModelS{
         double strike; // strike price  -> we are modeling a call option
         double initialPrice;
         double up, down, rate;
+        double p, q;
 
-        virtual ModelS() {};
+        virtual ModelS(double s) = 0;
 
         virtual double safePower(double base, int power) = 0;
 
@@ -24,11 +25,16 @@ class ModelS{
 
         virtual state indexToState(int idx) = 0;
 
-        virtual double worker(double p, double q, double r, double s,
-                double u, double d, int startPeriod, int stopPeriod) = 0;
+        virtual double worker(int idx) = 0;
+
+        virtual int nextUp(int idx, int currentPeriod) = 0;
+
+        virtual int nextDown(int idx, int currentPeriod) = 0;
 
         virtual double calculate(double up, double down,
                                   double rate, double s0) = 0;
+
+        virtual bool isEqual(double a, double b) = 0;
 
         virtual ~ModelS() {};
 };
