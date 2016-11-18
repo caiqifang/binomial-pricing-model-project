@@ -81,10 +81,11 @@ double ModelS::calculate(double u, double d, double r, double s0){
     up = u;
     down = d;
     rate = r;
+    initialPrice = s0;
     p = (1 + rate - down) /(up - down);
     q = (up - rate - 1) /(up - down);
 
-    for (int i = (MAXPERIOD+1)*(MAXPERIOD+2)/2 - 1; i >= 0; i--){
+    for(int i = (MAXPERIOD+1)*(MAXPERIOD+2)/2 - 1; i >= 0; i--){
         buffer[i] = worker(i);
     }
 
