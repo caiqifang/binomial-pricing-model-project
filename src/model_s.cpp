@@ -62,19 +62,17 @@ double ModelS::worker(int idx){
         return max(now.stockPrice - strike, 0.0);
     }
     else
-    {   // need backwork induction
-        int head = nextUp(idx, now.period);
-        int tail = nextDown(idx, now.period);
+    {
+        int head = nextUp(idx, now);
+        int tail = head + 1;
         return 1.0/(1+rate)*(p*buffer[head] + q*buffer[tail]);
     }
 }
 
-int ModelS::nextUp(int idx){
-    // TODO
-}
-
-int ModelS::nextDown(int idx){
-    // TODO
+int ModelS::nextUp(int idx, state s){
+    int begin = (s.period+1)(s.period+2)/2;
+    int diff = idx - (s.period+1)(s.period)/2;
+    return begin + diff;
 }
 
 double ModelS::calculate(double u, double d, double r, double s0){

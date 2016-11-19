@@ -17,15 +17,13 @@ class ModelS{
 
         virtual double safePower(double base, int power) = 0;
 
-        virtual int stateToIndex(double stockPrice, int period) = 0;
+        virtual int stateToIndex(state s) = 0;
 
         virtual state indexToState(int idx) = 0;
 
         virtual double worker(int idx) = 0;
 
-        virtual int nextUp(int idx, int currentPeriod) = 0;
-
-        virtual int nextDown(int idx, int currentPeriod) = 0;
+        virtual int nextUp(int idx, state s) = 0;
 
         virtual bool isEqual(double a, double b) = 0;
 
