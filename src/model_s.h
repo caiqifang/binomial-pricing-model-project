@@ -27,6 +27,10 @@ class ModelS{
         // take in contract strike price at class allocation
         virtual ModelS(double s) = 0;
 
+        // up -> up factor of stock (up >= 1)
+        // down -> down factor of stock (1 >= down >= 0)
+        // rate -> interest rate   rate >=0, typically rate < 1
+        // s0 -> original stock price
         virtual double calculate(double up, double down,
                                   double rate, double s0) = 0;
 
