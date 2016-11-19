@@ -17,15 +17,11 @@ class ModelS{
 
         virtual double safePower(double base, int power) = 0;
 
-        virtual int stateToIndex(state s) = 0;
-
         virtual state indexToState(int idx) = 0;
 
         virtual double worker(int idx) = 0;
 
         virtual int nextUp(int idx, state s) = 0;
-
-        virtual bool isEqual(double a, double b) = 0;
 
     public:
         // take in contract strike price at class allocation

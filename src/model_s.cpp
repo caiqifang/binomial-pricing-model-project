@@ -20,15 +20,6 @@ double ModelS::safePower(double base, int power){
     return ret;
 }
 
-// hash function from state info to idx in buffer
-int ModelS::stateToIndex(double stockPrice, int period){
-    int idx = period*(period+1)/2;  // starting idx
-    int maxPrice = initialPrice * safePower(up,period);
-    // TODO
-
-    return idx;
-}
-
 state ModelS::indexToState(int idx){
     state result;
     int length = (MAXPERIOD+1)*(MAXPERIOD+2)/2;
@@ -37,7 +28,7 @@ state ModelS::indexToState(int idx){
     int period_end = MAXPERIOD;
     int start;
     // find the period
-    while(period >= 0 && period < MAXPERIOD){
+    while(period >= 0 && period <= MAXPERIOD){
         start = period*(period+1)/2;
         if( start <= idx && idx <= (start+period))
             break; // period correct
@@ -51,7 +42,13 @@ state ModelS::indexToState(int idx){
         }
     }
     result.period = period;
-    // TODO
+    // calculate state stock price
+    double price = initialPrice * safePower(up, period);
+    int diff = idx - start;
+    for (int c = 0; c < diff; c++){
+        price = price / up * down;
+    }
+    result.stockPrice = price;
     return result;
 }
 
@@ -88,11 +85,4 @@ double ModelS::calculate(double u, double d, double r, double s0){
     }
 
     return buffer[0];
-}
-
-bool ModelS::isEqual(double a, double b){
-    // error margin 0.00001
-    if(std::abs(a - b) < 0.00001)
-        return true;
-    return false;
 }
