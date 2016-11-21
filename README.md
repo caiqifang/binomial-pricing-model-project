@@ -26,9 +26,7 @@ Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E.
 
 **Faculty Advisers**:    
 
-Dr. David Handron (CMU-21370)      
-
-Prof. William Hrusa (CMU-21378)     
+Dr. David Handron (CMU-21370)       
 
 Prof. Todd C. Mowry (CMU-15418)       
 
