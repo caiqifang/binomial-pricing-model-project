@@ -39,7 +39,9 @@
 <h3>
 <a id="link-to-project-milestone-report" class="anchor" href="#link-to-project-milestone-report" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Link to Project Milestone Report</h3>
 
-<p><a href="https://docs.google.com/document/d/1knPJ6s4TA04zL2ugBCI1GFgrPq1_ag-HBhVlMPj1X3k/edit?usp=sharing">Click Here</a></p>
+<p><a href="https://docs.google.com/document/d/1knPJ6s4TA04zL2ugBCI1GFgrPq1_ag-HBhVlMPj1X3k/edit?usp=sharing">Click Here</a>
+Or use URL:
+<a href="https://docs.google.com/document/d/1knPJ6s4TA04zL2ugBCI1GFgrPq1_ag-HBhVlMPj1X3k/edit?usp=sharing">https://docs.google.com/document/d/1knPJ6s4TA04zL2ugBCI1GFgrPq1_ag-HBhVlMPj1X3k/edit?usp=sharing</a></p>
 
 <h3>
 <a id="background-information" class="anchor" href="#background-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Background Information</h3>
@@ -57,7 +59,7 @@ To calculate the initial price of the security, we introduce the technique of ba
 
 <p><img src="https://i.imgsafe.org/81b096856a.png" alt=""></p>
 
-<p>We can draw some quick observations of this model. The price of each tree node depends on the price of its left and right children nodes and different parameters in the backward induction formula. Different path calculates its price using different children nodes, thus paths are independent of each other. This property allows us to parallelize the calculation of an N period binomial model, theoretically improving its performance from O(2^N) to O(N) time complexity. We will need to use some data to train and calibrate the binomial model and find the best parameters (u, d, r) before we can backward induct the current correct price of the security. If a trading system sees a difference between the market price and theoretical model price, it can further exam the situation and explore potential arbitrage in the mispriced security.</p>
+<p>We can draw some quick observations of this model. The price of each tree node depends on the price of its left and right children nodes and different parameters in the backward induction formula. Different path calculates its price using different children nodes, thus paths are independent of each other. This property allows us to parallelize the calculation of an N period binomial model, theoretically improving its performance from O(2^N) to O(N) time complexity. We will need to use some data to train and calibrate the binomial model and find the best parameters (u, d, r) before we can backward induct the current correct price of the security. If a trading system sees a difference between the market price and theoretical model price, it can further exam the situation and explore potential arbitrage in the mis-priced security.</p>
 
 <h3>
 <a id="the-challenge" class="anchor" href="#the-challenge" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>THE CHALLENGE:</h3>
