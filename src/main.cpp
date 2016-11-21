@@ -12,7 +12,7 @@ int main(int argc, char** argv)
     printf("start calculation\n");
     double result = model.calculate(1.23, .89, 0.03, 3);
     t = clock() - t;
-    printf("1 time calculation %f seconds \n" ,((double)t)/CLOCKS_PER_SEC);
+    printf("1 time calculation %f milliseconds \n" ,((double)t)/(CLOCKS_PER_SEC/1000));
     printf(" result = %f \n", result);
     return 0;
 }
