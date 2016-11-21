@@ -1,6 +1,6 @@
 // this is the sequantial implementation of the binomial pricing model
 
-#define MAXPERIOD 100
+#define MAXPERIOD 500
 
 struct state{
     double stockPrice;

@@ -86,7 +86,7 @@ double ModelS::calculate(double u, double d, double r, double s0){
     p = (1 + rate - down) /(up - down);
     q = (up - rate - 1) /(up - down);
     for(int i = (MAXPERIOD+1)*(MAXPERIOD+2)/2 - 1; i >= 0; i--){
-    printf("calculating idx %d \n", i);
+    // printf("calculating idx %d \n", i);
         buffer[i] = worker(i);
     //    printf("Finish Calculating %d \n", i);
     }
