@@ -1,6 +1,6 @@
 // this is the sequantial implementation of the binomial pricing model
 
-#define MAXPERIOD 50
+#define MAXPERIOD 100
 
 struct state{
     double stockPrice;
@@ -15,24 +15,24 @@ class ModelS{
         double up, down, rate;
         double p, q;
 
-        virtual double safePower(double base, int power) = 0;
+        double safePower(double base, int power);
 
-        virtual state indexToState(int idx) = 0;
+        state indexToState(int idx);
 
-        virtual double worker(int idx) = 0;
+        double worker(int idx);
 
-        virtual int nextUp(int idx, state s) = 0;
+        int nextUp(int idx, state s);
 
     public:
         // take in contract strike price at class allocation
-        virtual ModelS(double s) = 0;
+        ModelS(double s);
 
         // up -> up factor of stock (up >= 1)
         // down -> down factor of stock (1 >= down >= 0)
         // rate -> interest rate   rate >=0, typically rate < 1
         // s0 -> original stock price
-        virtual double calculate(double up, double down,
-                                  double rate, double s0) = 0;
+        double calculate(double up, double down,
+                                  double rate, double s0);
 
-        virtual ~ModelS() {};
+         ~ModelS() {};
 };

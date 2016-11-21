@@ -1,8 +1,10 @@
-#include <model_s.h>
-#include <cmath>
-#include <cfenv>
+#include "model_s.h"
+#include <math.h>
+#include <fenv.h>
 #include <stdexcept>
 #include <stdlib.h>
+#include <stdio.h>
+
 
 ModelS::ModelS(double s){
     strike = s;
@@ -10,11 +12,11 @@ ModelS::ModelS(double s){
 
 // safe calculation
 double ModelS::safePower(double base, int power){
-    std::feclearexcept(FE_OVERFLOW);
-    std::feclearexcept(FE_UNDERFLOW); // overflow and underflow detection
+    feclearexcept(FE_OVERFLOW);
+    feclearexcept(FE_UNDERFLOW); // overflow and underflow detection
     double ret = pow(base, power);
-    if((bool)std::fetestexcept(FE_OVERFLOW)
-              || (bool)std::fetestexcept(FE_UNDERFLOW)){
+    if((bool)fetestexcept(FE_OVERFLOW)
+              || (bool)fetestexcept(FE_UNDERFLOW)){
         throw std::runtime_error("power raise exception!\n");
     }
     return ret;
@@ -22,23 +24,26 @@ double ModelS::safePower(double base, int power){
 
 state ModelS::indexToState(int idx){
     state result;
-    int length = (MAXPERIOD+1)*(MAXPERIOD+2)/2;
     int period = MAXPERIOD/2;
     int period_start = 0;
-    int period_end = MAXPERIOD;
+    int period_end = MAXPERIOD+1;
     int start;
     // find the period
     while(period >= 0 && period <= MAXPERIOD){
         start = period*(period+1)/2;
+     //   printf("start idx %d\n", start);
+     //   printf("-period start %d\n", period_start);
+     //   printf("-period %d\n", period);
+     //   printf("-period end %d\n", period_end);
         if( start <= idx && idx <= (start+period))
             break; // period correct
         if(idx < start){
-            period = (period_start + period) / 2;
             period_end = period;
+            period = (period_start + period) / 2;
         }
         else{
-            period = (period_end + period) / 2;
             period_start = period;
+            period = (period_end + period) / 2;
         }
     }
     result.period = period;
@@ -53,10 +58,11 @@ state ModelS::indexToState(int idx){
 }
 
 double ModelS::worker(int idx){
+    //printf("here is worker working on idx %d \n", idx);
     state now = indexToState(idx);
     if(now.period == MAXPERIOD){
         // leaf of tree model calculate option value
-        return max(now.stockPrice - strike, 0.0);
+        return std::max(now.stockPrice - strike, 0.0);
     }
     else
     {
@@ -67,8 +73,8 @@ double ModelS::worker(int idx){
 }
 
 int ModelS::nextUp(int idx, state s){
-    int begin = (s.period+1)(s.period+2)/2;
-    int diff = idx - (s.period+1)(s.period)/2;
+    int begin = (s.period+1)*(s.period+2)/2;
+    int diff = idx - (s.period+1)*(s.period)/2;
     return begin + diff;
 }
 
@@ -79,9 +85,10 @@ double ModelS::calculate(double u, double d, double r, double s0){
     initialPrice = s0;
     p = (1 + rate - down) /(up - down);
     q = (up - rate - 1) /(up - down);
-
     for(int i = (MAXPERIOD+1)*(MAXPERIOD+2)/2 - 1; i >= 0; i--){
+    printf("calculating idx %d \n", i);
         buffer[i] = worker(i);
+    //    printf("Finish Calculating %d \n", i);
     }
 
     return buffer[0];
