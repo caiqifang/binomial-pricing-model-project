@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Parallel Computation of Binomial Security Pricing Model : CMU 15-418 Term Project">
+    <meta name="description" content="Parallel Computation of Binomial Security Pricing Model : CMU 15-418/ 618 Final Project">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/caiqifang/binomial-pricing-model-project">View on GitHub</a>
 
           <h1 id="project_title">Parallel Computation of Binomial Security Pricing Model</h1>
-          <h2 id="project_tagline">CMU 15-418 Term Project</h2>
+          <h2 id="project_tagline">CMU 15-418/ 618 Final Project</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/caiqifang/binomial-pricing-model-project/zipball/master">Download this project as a .zip file</a>
@@ -37,6 +37,11 @@
 <p>Our goal of this project is to use parallel computing techniques to increase the calculating performance of binomial security pricing model. We will implement the project on Nvidia GPU platforms using CUDA API. In the end, we wish we can build a real-time program that reacts to changes in variables and returns the theoretical prices of securities. Hope this pricing engine can serve as the core of a black-box trading system.</p>
 
 <h3>
+<a id="link-to-project-milestone-report" class="anchor" href="#link-to-project-milestone-report" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Link to Project Milestone Report</h3>
+
+<p><a href="https://docs.google.com/document/d/1knPJ6s4TA04zL2ugBCI1GFgrPq1_ag-HBhVlMPj1X3k/edit?usp=sharing">Click Here</a></p>
+
+<h3>
 <a id="background-information" class="anchor" href="#background-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Background Information</h3>
 
 <p>Binomial security pricing model is a fundamental technique used in the financial industry. The idea of this model is that we can use a binomial tree to describe the evolution of security price. At time 0, we can denote the security price to be S0. At the next time period, the price S0 can evolve into S1(Head) with an up factor of u and S1(Tail) with a down factor of d. A multiple period binomial model is shown in the graph.    </p>
@@ -44,7 +49,7 @@
 <p><img src="https://i.imgsafe.org/81b1057aaa.png" alt="">  </p>
 
 <p>Picture from Stochastic Calculus for Finance I: The Binomial Asset Pricing Model by Steven E. Shreve. (In this case, the up factor and down factor (u and d) are fixed throughout time.)
-To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation          </p>
+To calculate the initial price of the security, we introduce the technique of backward induction. Given the arbitrage-free interest rate r, the up factor u and down factor d, the no-arbitrage price of the security at time n can be computed recursively backward in time by this equation          </p>
 
 <p><img src="https://i.imgsafe.org/81b0cbd8b0.png" alt=""> </p>
 
