@@ -67,7 +67,7 @@ long double ModelS::worker(int idx){
     {
         int head = nextUp(idx, now);
         int tail = head + 1;
-        printf("time period: %d, up %Lf  down %Lf \n", now.period, buffer[head], buffer[tail]);
+     //   printf("time period: %d, up %Lf  down %Lf \n", now.period, buffer[head], buffer[tail]);
         return 1.0/(1+rate)*(p*buffer[head] + q*buffer[tail]);
     }
 }
@@ -85,7 +85,7 @@ long double ModelS::calculate(long double u,long double d,long double r,long dou
     initialPrice = s0;
     p = (1 + rate - down) /(up - down);
     q = (up - rate - 1) /(up - down);
-    printf(" p: %Lf  q: %Lf  \n", p, q);
+   // printf(" p: %Lf  q: %Lf  \n", p, q);
     for(int i = (MAXPERIOD+1)*(MAXPERIOD+2)/2 - 1; i >= 0; i--){
         buffer[i] = worker(i);
     //    printf("Finish Calculating %d \n", i);
