@@ -1,6 +1,14 @@
 #ifndef __CUDA_MODEL_H__
 #define __CUDA_MODEL_H__
 
+/////////// KERNEL ////////////
+// kernelFinalStage(int length, int maxL,  double strike,
+// double* device_buf, double* device_u, double* device_d, double* device_s)
+//
+// kernelCalc () ;
+
+///////////// HOST/////////////
+
 class CudaModel
 {
     private:
