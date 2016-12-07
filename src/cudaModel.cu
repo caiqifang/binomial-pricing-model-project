@@ -64,11 +64,16 @@ __global__ void kernelCalc(int level, int maxL, int length,
     int head = prev_start + element*(size+1) + rank;
     int tail = head + 1;
     device_buf[curr_start+index] = (p*device_buf[head] + q*device_buf[tail]);
+    return;
 }
 
-__global__ void kernelOutput(){
+__global__ void kernelOutput(double* device_output, double* device_buf,
+        int length, int maxL){
     int index = blockDim.x * blockIdx.x + threadIdx.x;
-        // TODO
+    if (index >= length) return; /// out of bound
+    int total_length = length*(maxL+2)*(maxL+1)/2;
+    device_output[index] = device_buf[total_length - length + index];
+    return;
 }
 //////////// HOST ///////////////////////////
 // initialize the buffer and related structure
@@ -126,7 +131,7 @@ void CudaModel::calculate(double* array_u, double* array_d, double* array_s,
         cudaThreadSynchronize();
     }
     // output result
-    kernelOutput<<<1, length>>>(); // TODO
+    kernelOutput<<<1, length>>>(device_output, device_buf, length, MAXLEVEL);
     cudaThreadSynchronize();
     cudaMemcpy(array_output, device_output,
             length*sizeof(double), cudaMemcpyDeviceToHost);

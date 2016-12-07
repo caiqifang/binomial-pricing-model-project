@@ -8,7 +8,7 @@
 // kernelCalc( int level, int maxL, int length, double* device_p
 //  double* device_q, double* device_buf) ;
 //
-// kernelOutput ()
+// kernelOutput ( double* device_output, double* device_buf, int length, int maxL)
 
 ///////////// HOST/////////////
 
@@ -40,6 +40,6 @@ class CudaModel
         // length-> number of group you want to calculate  up to 10
         // All data match by their array index
         void calculate(double* array_u, double* array_d, double* array_s,
-                    double* array_output, int length);
+                double* array_output, int length);
 }
 #endif
