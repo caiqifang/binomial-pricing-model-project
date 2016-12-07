@@ -4,17 +4,21 @@
 class CudaModel
 {
     private:
-        long double strike;
+        double strike;
+        double* device_p;
+        double* device_q;
+        double* device_buf;
+        double* device_u;
+        double* device_d;
+        double* device_s;
+        double array_p[MAXLENGTH];
+        double array_q[MAXLENGTH];
 
     public:
-        CudaModel(long double s);
+        CudaModel(double s);
         ~CudaModel();
 
-        void init();
-        void train();
-        void calculate();
-        void getOutput();
-
+        void calculate(double* array_u, double* array_d, double* array_s,
+                    double* array_output, int length);
 }
-
 #endif
