@@ -5,7 +5,10 @@
 // kernelFinalStage(int length, int maxL,  double strike,
 // double* device_buf, double* device_u, double* device_d, double* device_s)
 //
-// kernelCalc () ;
+// kernelCalc( int level, int maxL, int length, double* device_p
+//  double* device_q, double* device_buf) ;
+//
+// kernelOutput ()
 
 ///////////// HOST/////////////
 
@@ -16,6 +19,7 @@ class CudaModel
         double* device_p;
         double* device_q;
         double* device_buf;
+        double* device_output;
         double* device_u;
         double* device_d;
         double* device_s;
@@ -23,9 +27,18 @@ class CudaModel
         double array_q[MAXLENGTH];
 
     public:
+        // Class constructor,   need to have a strike price to create
         CudaModel(double s);
         ~CudaModel();
 
+        // Host code:
+        // calculate function that can handle up to 10 groups of calculation
+        // array_u -> an array of up factors  u
+        // array_d -> an array of down factors d
+        // array_s -> an array of original stock price s0
+        // array_output-> place to store calculation result
+        // length-> number of group you want to calculate  up to 10
+        // All data match by their array index
         void calculate(double* array_u, double* array_d, double* array_s,
                     double* array_output, int length);
 }
