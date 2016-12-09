@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "model_s.h"
 #include <time.h>
 #include <math.h>
 #include <algorithm>
 #include "cudaModel.h"
+#include "model_s.h"
 
 double derivative_cal(CudaModel &model, double u, double d, double r, double step, double u_step, double d_step, double r_step, double *s, double *v, int len) {
     // double *itr_s = s;
@@ -87,8 +87,8 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
     double d_limit = 0.5;
     //ModelS model = ModelS(4.5);
     double error = 100000.0;
-    double *itr_s = s;
-    double *itr_v = v;
+    // double *itr_s = s;
+    // double *itr_v = v;
     //printf("test %f\n", model.calculate(1.004758, 0.995445, 0, 219.07));
     int count = 0;
     int step_count = 1;
