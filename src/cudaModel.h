@@ -37,7 +37,7 @@ class CudaModel
         ~CudaModel();
 
         // Host code:
-        // calculate function that can handle up to 10 groups of calculation
+        // calculate function that can handle up to 20 groups of calculation
         // array_u -> an array of up factors  u
         // array_d -> an array of down factors d
         // array_s -> an array of original stock price s0
