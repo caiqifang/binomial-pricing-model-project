@@ -157,7 +157,7 @@ int main(int argc, char** argv)
     double v[10] = {36.9, 39.6, 59.3, 56.5, 59.95, 70.05, 70.0, 67.3, 62.2, 57.4};
     //int len = sizeof(s) / sizeof(double);
     double u = 1.0001, d = 0.9999, r = 0;
-    double epsilon = 0.25;
+    double epsilon = 9;
     int len = 10;
     int count = training(model, u, d, r, s, v, epsilon, len);
     printf("count %d\n", count);
