@@ -7,12 +7,6 @@
 
 #include "cudaModel.h"
 
-#define MAXLEVEL 600
-// single buffer array size
-#define BUFSIZE (MAXLEVEL+1)*(MAXLEVEL+2)/2
-#define MAXLENGTH 10
-
-#define THREAD_PER_BLOCK 128
 /*
    This file is the implementation of parallel binomial model
  */

@@ -32,7 +32,7 @@ class ModelS{
         // rate -> interest rate   rate >=0, typically rate < 1
         // s0 -> original stock price
         long double calculate(long double up, long double down,
-                                  long double rate, long double s0);
+                long double rate, long double s0);
 
-         ~ModelS() {};
+        ~ModelS() {};
 };

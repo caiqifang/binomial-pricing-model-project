@@ -15,7 +15,7 @@ long double ModelS::safePower(long double base, int power){
     feclearexcept(FE_UNDERFLOW); // overflow and underflow detection
     long double ret = powl(base, (long double)power);
     if((bool)fetestexcept(FE_OVERFLOW)
-              || (bool)fetestexcept(FE_UNDERFLOW)){
+            || (bool)fetestexcept(FE_UNDERFLOW)){
         throw std::runtime_error("power raise exception!\n");
     }
     return ret;
@@ -30,10 +30,10 @@ state ModelS::indexToState(int idx){
     // find the period
     while(period >= 0 && period <= MAXPERIOD){
         start = period*(period+1)/2;
-     //   printf("start idx %d\n", start);
-     //   printf("-period start %d\n", period_start);
-     //   printf("-period %d\n", period);
-     //   printf("-period end %d\n", period_end);
+        //   printf("start idx %d\n", start);
+        //   printf("-period start %d\n", period_start);
+        //   printf("-period %d\n", period);
+        //   printf("-period end %d\n", period_end);
         if( start <= idx && idx <= (start+period))
             break; // period correct
         if(idx < start){
@@ -67,7 +67,7 @@ long double ModelS::worker(int idx){
     {
         int head = nextUp(idx, now);
         int tail = head + 1;
-     //   printf("time period: %d, up %Lf  down %Lf \n", now.period, buffer[head], buffer[tail]);
+        //   printf("time period: %d, up %Lf  down %Lf \n", now.period, buffer[head], buffer[tail]);
         return 1.0/(1+rate)*(p*buffer[head] + q*buffer[tail]);
     }
 }
@@ -85,10 +85,10 @@ long double ModelS::calculate(long double u,long double d,long double r,long dou
     initialPrice = s0;
     p = (1 + rate - down) /(up - down);
     q = (up - rate - 1) /(up - down);
-   // printf(" p: %Lf  q: %Lf  \n", p, q);
+    // printf(" p: %Lf  q: %Lf  \n", p, q);
     for(int i = (MAXPERIOD+1)*(MAXPERIOD+2)/2 - 1; i >= 0; i--){
         buffer[i] = worker(i);
-    //    printf("Finish Calculating %d \n", i);
+        //    printf("Finish Calculating %d \n", i);
     }
 
     return buffer[0];

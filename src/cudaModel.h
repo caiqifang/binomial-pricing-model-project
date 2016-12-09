@@ -1,6 +1,11 @@
 #ifndef __CUDA_MODEL_H__
 #define __CUDA_MODEL_H__
 
+#define MAXLEVEL 600
+#define BUFSIZE (MAXLEVEL+1)*(MAXLEVEL+2)/2
+#define MAXLENGTH 20
+#define THREAD_PER_BLOCK 128
+
 /////////// KERNEL ////////////
 // kernelFinalStage(int length, int maxL,  double strike,
 // double* device_buf, double* device_u, double* device_d, double* device_s)
@@ -41,5 +46,5 @@ class CudaModel
         // All data match by their array index
         void calculate(double* array_u, double* array_d, double* array_s,
                 double* array_output, int length);
-}
+};
 #endif
