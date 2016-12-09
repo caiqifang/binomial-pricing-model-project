@@ -26,7 +26,7 @@ __device__ __inline__ int getIndex(int length, int maxL, int level){
 // kernel calculate inline
 
 __global__ void kernelFinalStage(int length, int maxL,  double strike,
-        double* device_buf, double* device_u, double* device_d, double* device_s){
+        double* device_buf, double device_u, double device_d, double* device_s){
     int index = blockDim.x * blockIdx.x + threadIdx.x;
     int size = maxL+1;
     if( index >= length * size)
@@ -34,16 +34,16 @@ __global__ void kernelFinalStage(int length, int maxL,  double strike,
     int element = index / size;
     double rank = __int2double_rn(index % size);
     double stock = device_s[element]; // s0
-    double up = device_u[element];
-    double down = device_d[element];
+    //double up = device_u[element];
+    //double down = device_d[element];
     double maxLevel = __int2double_rn(maxL);
-    stock = stock * pow(up, maxLevel-rank) * pow(down, rank);
+    stock = stock * pow(device_u, maxLevel-rank) * pow(device_d, rank);
     device_buf[index] = getValue(strike, stock);
     return;
 }
 
 __global__ void kernelCalc(int level, int maxL, int length,
-        double* device_p, double* device_q, double* device_buf){
+        double device_p, double device_q, double* device_buf){
     int index = blockDim.x * blockIdx.x + threadIdx.x;
     int size = level + 1;
     if( index >= length * size)
@@ -53,11 +53,12 @@ __global__ void kernelCalc(int level, int maxL, int length,
     int prev_start = getIndex( length, maxL, level+1);
     int element = index / size;
     int rank = index % size;
-    double p = device_p[element];
-    double q = device_q[element];
+    //double p = device_p[element];
+    //double q = device_q[element];
     int head = prev_start + element*(size+1) + rank;
     int tail = head + 1;
-    device_buf[curr_start+index] = (p*device_buf[head] + q*device_buf[tail]);
+    device_buf[curr_start+index] = (device_p*device_buf[head] +
+            device_q*device_buf[tail]);
     return;
 }
 
@@ -72,44 +73,46 @@ __global__ void kernelOutput(double* device_output, double* device_buf,
 //////////// HOST ///////////////////////////
 // initialize the buffer and related structure
 CudaModel::CudaModel(double s){
-    cudaMalloc(&device_p, sizeof(double)*MAXLENGTH);
-    cudaMalloc(&device_q, sizeof(double)*MAXLENGTH);
+    //cudaMalloc(&device_p, sizeof(double)*MAXLENGTH);
+    //cudaMalloc(&device_q, sizeof(double)*MAXLENGTH);
     cudaMalloc(&device_buf, sizeof(double)*MAXLENGTH*BUFSIZE);
     cudaMalloc(&device_output, sizeof(double)*MAXLENGTH);
-    cudaMalloc(&device_u, sizeof(double)*MAXLENGTH);
-    cudaMalloc(&device_d, sizeof(double)*MAXLENGTH);
+    // cudaMalloc(&device_u, sizeof(double)*MAXLENGTH);
+    // cudaMalloc(&device_d, sizeof(double)*MAXLENGTH);
     cudaMalloc(&device_s, sizeof(double)*MAXLENGTH);
     strike = s;
 }
 
 CudaModel::~CudaModel(){
-    cudaFree(device_p);
-    cudaFree(device_q);
+    // cudaFree(device_p);
+    // cudaFree(device_q);
     cudaFree(device_buf);
     cudaFree(device_output);
-    cudaFree(device_u);
-    cudaFree(device_d);
+    //  cudaFree(device_u);
+    //  cudaFree(device_d);
     cudaFree(device_s);
 }
 
-void CudaModel::calculate(double* array_u, double* array_d, double* array_s,
+void CudaModel::calculate(double up, double down, double* array_s,
         double* array_output, int length){
     if(length > MAXLENGTH){
         printf("error: ---length larger than system max!\n");
         return;
     }
+    device_u = up;
+    device_d = down;
 
-    cudaMemcpy(device_u, array_u, length*sizeof(double),cudaMemcpyHostToDevice);
-    cudaMemcpy(device_d, array_d, length*sizeof(double),cudaMemcpyHostToDevice);
+    //cudaMemcpy(device_u, array_u, length*sizeof(double),cudaMemcpyHostToDevice);
+    //cudaMemcpy(device_d, array_d, length*sizeof(double),cudaMemcpyHostToDevice);
     cudaMemcpy(device_s, array_s, length*sizeof(double),cudaMemcpyHostToDevice);
-    for(int c = 0; c < length; c++){
-        double p = (1.0 - array_d[c]) / (array_u[c] - array_d[c]);
-        double q = 1.0 - p;
-        array_p[c] = p;
-        array_q[c] = q;
-    }
-    cudaMemcpy(device_p, array_p, length*sizeof(double),cudaMemcpyHostToDevice);
-    cudaMemcpy(device_q, array_q, length*sizeof(double),cudaMemcpyHostToDevice);
+    // for(int c = 0; c < length; c++){
+    device_p = (1.0 - down) / (up - down);
+    device_q = 1.0 - device_p;
+    //     array_p[c] = p;
+    //     array_q[c] = q;
+
+    // cudaMemcpy(device_p, array_p, length*sizeof(double),cudaMemcpyHostToDevice);
+    // cudaMemcpy(device_q, array_q, length*sizeof(double),cudaMemcpyHostToDevice);
     // setup final stage
     int total_calc = length * (MAXLEVEL+1);
     int block_n = (total_calc + THREAD_PER_BLOCK -1) / THREAD_PER_BLOCK;

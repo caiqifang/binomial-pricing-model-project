@@ -21,15 +21,13 @@ class CudaModel
 {
     private:
         double strike;
-        double* device_p;
-        double* device_q;
+        double  device_p;
+        double  device_q;
         double* device_buf;
         double* device_output;
-        double* device_u;
-        double* device_d;
+        double  device_u;
+        double  device_d;
         double* device_s;
-        double array_p[MAXLENGTH];
-        double array_q[MAXLENGTH];
 
     public:
         // Class constructor,   need to have a strike price to create
@@ -44,7 +42,7 @@ class CudaModel
         // array_output-> place to store calculation result
         // length-> number of group you want to calculate  up to 10
         // All data match by their array index
-        void calculate(double* array_u, double* array_d, double* array_s,
+        void calculate(double up, double down, double* array_s,
                 double* array_output, int length);
 };
 #endif
