@@ -23,6 +23,7 @@ class CudaModel
         double strike;
         double  device_p;
         double  device_q;
+        double  device_r;
         double* device_buf;
         double* device_output;
         double  device_u;
@@ -42,7 +43,7 @@ class CudaModel
         // array_output-> place to store calculation result
         // length-> number of group you want to calculate  up to 10
         // All data match by their array index
-        void calculate(double up, double down, double* array_s,
+        void calculate(double up, double down, double rate, double* array_s,
                 double* array_output, int length);
 };
 #endif
