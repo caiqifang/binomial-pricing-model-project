@@ -42,8 +42,8 @@ __global__ void kernelFinalStage(int length, int maxL,  double strike,
     return;
 }
 
-__global__ void kernelCalc(int level, int maxL, int length,
-        double device_p, double device_q, double* device_buf){
+__global__ void kernelCalc(int level, int maxL, int length, double device_p,
+        double device_q, double device_r, double* device_buf){
     int index = blockDim.x * blockIdx.x + threadIdx.x;
     int size = level + 1;
     if( index >= length * size)
@@ -57,7 +57,7 @@ __global__ void kernelCalc(int level, int maxL, int length,
     //double q = device_q[element];
     int head = prev_start + element*(size+1) + rank;
     int tail = head + 1;
-    device_buf[curr_start+index] = (device_p*device_buf[head] +
+    device_buf[curr_start+index] = 1.0/(1+device_r)*(device_p*device_buf[head] +
             device_q*device_buf[tail]);
     return;
 }
@@ -93,7 +93,7 @@ CudaModel::~CudaModel(){
     cudaFree(device_s);
 }
 
-void CudaModel::calculate(double up, double down, double* array_s,
+void CudaModel::calculate(double up, double down, double rate, double* array_s,
         double* array_output, int length){
     if(length > MAXLENGTH){
         printf("error: ---length larger than system max!\n");
@@ -101,12 +101,12 @@ void CudaModel::calculate(double up, double down, double* array_s,
     }
     device_u = up;
     device_d = down;
-
+    device_r = rate;
     //cudaMemcpy(device_u, array_u, length*sizeof(double),cudaMemcpyHostToDevice);
     //cudaMemcpy(device_d, array_d, length*sizeof(double),cudaMemcpyHostToDevice);
     cudaMemcpy(device_s, array_s, length*sizeof(double),cudaMemcpyHostToDevice);
     // for(int c = 0; c < length; c++){
-    device_p = (1.0 - down) / (up - down);
+    device_p = (1.0 + rate - down) / (up - down);
     device_q = 1.0 - device_p;
     //     array_p[c] = p;
     //     array_q[c] = q;
@@ -117,14 +117,14 @@ void CudaModel::calculate(double up, double down, double* array_s,
     int total_calc = length * (MAXLEVEL+1);
     int block_n = (total_calc + THREAD_PER_BLOCK -1) / THREAD_PER_BLOCK;
     kernelFinalStage<<<block_n, THREAD_PER_BLOCK>>>(length, MAXLEVEL, strike,
-            device_buf, device_u, device_d, device_s);
+                device_buf, device_u, device_d, device_s);
     cudaThreadSynchronize();
     // parallel by level
     for(int level = MAXLEVEL-1; level >= 0; level--){
         total_calc = length * (level+1);
         block_n = (total_calc + THREAD_PER_BLOCK -1) / THREAD_PER_BLOCK;
-        kernelCalc<<<block_n, THREAD_PER_BLOCK>>>(level, MAXLEVEL,
-                length, device_p, device_q, device_buf);
+        kernelCalc<<<block_n, THREAD_PER_BLOCK>>>(level, MAXLEVEL, length,
+                device_p, device_q, device_r, device_buf);
         cudaThreadSynchronize();
     }
     // output result
