@@ -61,11 +61,11 @@ double training_learing_rate(double error, double derivative) {
 }
 
 double step_divisor_balancer(double error, double epsilon) {
-    return 0.75 * powl(0.999999, error - epsilon) + 0.25;
+    return 0.75 * powl(0.999999999, error - epsilon) + 0.25;
 }
 
 double step_divisor(double error, double epsilon) {
-    return 8.999999 * powl(0.999999, (error - epsilon) / step_divisor_balancer(error, epsilon)) + 1.000001;
+    return 8.999999999 * powl(0.999999999, (error - epsilon) / step_divisor_balancer(error, epsilon)) + 1.000000001;
 }
 
 double step_limit(double error, double gap, double epsilon) {
@@ -157,7 +157,7 @@ int main(int argc, char** argv)
     double v[10] = {36.9, 39.6, 59.3, 56.5, 59.95, 70.05, 70.0, 67.3, 62.2, 57.4};
     //int len = sizeof(s) / sizeof(double);
     double u = 1.0001, d = 0.9999, r = 0;
-    double epsilon = 9;
+    double epsilon = 2;
     int len = 10;
     int count = training(model, u, d, r, s, v, epsilon, len);
     printf("count %d\n", count);
