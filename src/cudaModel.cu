@@ -117,7 +117,7 @@ void CudaModel::calculate(double up, double down, double rate, double* array_s,
     int total_calc = length * (MAXLEVEL+1);
     int block_n = (total_calc + THREAD_PER_BLOCK -1) / THREAD_PER_BLOCK;
     kernelFinalStage<<<block_n, THREAD_PER_BLOCK>>>(length, MAXLEVEL, strike,
-                device_buf, device_u, device_d, device_s);
+            device_buf, device_u, device_d, device_s);
     cudaThreadSynchronize();
     // parallel by level
     for(int level = MAXLEVEL-1; level >= 0; level--){
