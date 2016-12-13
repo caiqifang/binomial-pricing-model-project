@@ -41,7 +41,7 @@ double step_divisor_balancer(double error, double epsilon) {
 }
 
 double step_divisor_weight(double error) {
-    return 1000 - 90 * (atan(error) / M_PI * 2); 
+    return 100 - 90 * (atan(error) / M_PI * 2); 
 }
 
 double step_divisor(double error, double epsilon) {
@@ -174,7 +174,7 @@ int main(int argc, char** argv)
 	110,
 	110.95};*/
     double u = 1.001, d = 0.999, r = 0.00002;
-    double epsilon = 4.5;
+    double epsilon = 4;
     int len = 10;
     int count = training(model, u, d, r, s, v, epsilon, len);
     //printf("count %d\n", count);
