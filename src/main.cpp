@@ -7,52 +7,28 @@
 #include "model_s.h"
 
 double derivative_cal(CudaModel &model, double u, double d, double r, double step, double u_step, double d_step, double r_step, double *s, double *v, int len) {
-    // double *itr_s = s;
-    // double *itr_v = v;
-    //int len = sizeof(s) / sizeof(double);
     double derivative_delta = 0;
     double delta_v[10];
     double original_v[10];
-    model.calculate(u + u_step, d + d_step, s, delta_v, len);
-    model.calculate(u, d, s, original_v, len);
+    model.calculate(u + u_step, d + d_step, r + r_step, s, delta_v, len);
+    model.calculate(u, d, r, s, original_v, len);
 
     for(int i = 0; i < len; ++i) {
         derivative_delta += ((delta_v[i] - v[i]) * (delta_v[i] - v[i]) - (original_v[i] - v[i]) * (original_v[i] - v[i])) / step;
     }
 
-    // for(int i = 0; i < len; ++i) {
-    //     double cur_s = *(itr_s + i);
-    //     double cur_v = *(itr_v + i);
-    //     double delta_v = model.calculate(u + u_step, d + d_step, r + r_step, cur_s);
-    //     double original_v = model.calculate(u, d, r, cur_s);
-    //     printf("delta_v %f\n", delta_v);
-    //     printf("original_v %f\n", original_v);
-    //     derivative_delta += ((delta_v - cur_v) * (delta_v - cur_v) - (original_v - cur_v) * (original_v - cur_v)) / step;
-    //}
-    //printf("len %d\n", len);
-    printf("derivative_delta %f\n", derivative_delta);
     return derivative_delta / len;
 }
 
 double error_cal(CudaModel &model, double u, double d, double r, double *s, double *v, int len) {
-    //double *itr_s = s;
-    //double *itr_v = v;
-    //int len = sizeof(s) / sizeof(double);
     double total_error = 0;
     double delta_v[10];
-    model.calculate(u, d, s, delta_v, len);
+    model.calculate(u, d, r, s, delta_v, len);
 
     for(int i = 0; i < len; ++i) {
         total_error += (delta_v[i] - v[i]) * (delta_v[i] - v[i]);
     }
-    // for(int i = 0; i < len; ++i) {
-    //     double cur_s = *(itr_s + i);
-    //     double cur_v = *(itr_v + i);
-    //     double v = model.calculate(u, d, r, cur_s);
-    //     printf("v %f\n", v);
-    //     total_error += (v - cur_v) * (v - cur_v);
-    // }
-    printf("total_error %f\n", total_error);
+	
     return total_error / len;
 }
 
@@ -64,12 +40,20 @@ double step_divisor_balancer(double error, double epsilon) {
     return 0.75 * powl(0.999999999999, error - epsilon) + 0.25;
 }
 
+double step_divisor_weight(double error) {
+    return 1000 - 90 * (atan(error) / M_PI * 2); 
+}
+
 double step_divisor(double error, double epsilon) {
-    return 998.999999999999 * powl(0.999999999999, (error - epsilon) / step_divisor_balancer(error, epsilon)) + 1.000000000001;
+    return step_divisor_weight(error) * powl(0.999999999999, (error - epsilon) / step_divisor_balancer(error, epsilon)) + 1.000000000001;
 }
 
 double step_limit(double error, double gap, double epsilon) {
     return (atan(error / step_divisor(error, epsilon)) / M_PI * 2) * gap / step_divisor(error, epsilon);
+}
+
+double r_step_limit(double error, double r_step) {
+    return atan(error) / M_PI * 2 * r_step;
 }
 
 int training(CudaModel &model, double &u, double &d, double &r, double *s, double *v, double &epsilon, int &len) {
@@ -77,28 +61,29 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
     double d_step = 0.00001;
     double u_limit_step = 0.000001;
     double d_limit_step = 0.000001;
-    //double r_step = 0;
+    double r_step = 0.000001;
     double u_learning_rate = 0.0001;
     double d_learning_rate = 0.0001;
-    //double learning_rate_min_limit = 0.0000001;
-    //double learning_rate_max_limit = 0.0001;
+    double r_learning_rate = 0.000001;
 
     double u_limit = 1.8;
     double d_limit = 0.5;
-    //ModelS model = ModelS(4.5);
-    double error = 100000.0;
-    // double *itr_s = s;
-    // double *itr_v = v;
-    //printf("test %f\n", model.calculate(1.004758, 0.995445, 0, 219.07));
+    double error = 10000000.0;
     int count = 0;
     int step_count = 1;
+	
+    double cur_best_error = error;
+    double cur_best_u = u;
+    double cur_best_d = d;
+    double cur_best_r = r;
     while(error > epsilon) {
-	printf("--------------------------\n");
+	//printf("--------------------------\n");
         double derivative_u = derivative_cal(model, u, d, r, u_step, u_step, 0, 0, s, v, len);
         double derivative_d = derivative_cal(model, u, d, r, d_step, 0, d_step, 0, s, v, len);
-        //double derivative_r = derivative_cal(model, u, d, r, r_step, 0, 0, r_step, s, v);
-        printf("derivative_u %9.12f\n", derivative_u);
-        printf("derivative_d %9.12f\n", derivative_d);
+        double derivative_r = derivative_cal(model, u, d, r, r_step, 0, 0, r_step, s, v, len);
+       	//printf("derivative_u %9.12f\n", derivative_u);
+       	//printf("derivative_d %9.12f\n", derivative_d);
+	//printf("derivative_r %9.12f\n", derivative_r);	
 
         double u_cal_step = u_learning_rate * derivative_u;
         double cur_u_gap = u_cal_step > 0 ? u - 1.0 : 1.8 - u;
@@ -114,13 +99,16 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
             ++step_count;
         }
 	*/
-        //u = u > 1.0 ? u : 1.0 + step_count * u_step;
-        //u = std::min(u_limit, u);
         double d_cal_step = d_learning_rate * derivative_d;
         double cur_d_gap = d_cal_step > 0 ? d - 0.5 : 1.0 - d;
         double d_cur_step_limit = step_limit(error, cur_d_gap, epsilon);
         double d_cur_step = d_cal_step > 0 ? std::min(d_cal_step, d_cur_step_limit) : std::max(d_cal_step, -d_cur_step_limit);
         d -= d_cur_step;
+
+	double r_cal_step = r_learning_rate * derivative_r;
+	double r_cur_step_limit = r_step_limit(error, r_step);
+        double r_cur_step = r_cal_step > 0 ? std::min(r_cal_step, r_cur_step_limit) : std::max(r_cal_step, -r_cur_step_limit);
+        r -= r_cur_step;
         //max limimt
         /*
         if(d >= 1.0) {
@@ -131,21 +119,28 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
             d = d_limit + step_count * d_limit_step;
             ++step_count;
         }*/
-        //d = d < 1.0 ? d : 1.0 - step_count * d_step;
-        //min limit
-        //d = std::max(d_limit, d);
-        //printf("step_count %d\n", step_count);
-        printf("u %9.12f\n", u);
-        printf("d %9.12f\n", d);
-        //r -= r_learning_rate * derivative_r;
+        printf("%9.12f,", u);
+        printf("%9.12f,", d);
+	printf("%9.12f,", r);
         error = error_cal(model, u, d, r, s, v, len);
+	if(error < cur_best_error) {
+	    cur_best_error = error;
+	    cur_best_u = u;
+	    cur_best_d = d;
+	    cur_best_r = r;
+	}
         u_learning_rate = training_learing_rate(error, derivative_u);
-        //u_learning_rate = std::min(training_learing_rate(error), learning_rate_max_limit);
         d_learning_rate = training_learing_rate(error, derivative_d);
-        //d_learning_rate = std::min(training_learing_rate(error), learning_rate_max_limit);
-        printf("error %9.12f\n", error);
-        printf("learning_rate %9.12f\n", u_learning_rate);
-        count += 5;
+        r_learning_rate = training_learing_rate(error, derivative_r);
+        printf("%9.12f\n", error);
+	//printf("cur_best_error %9.12f\n", cur_best_error);
+	//printf("cur_best_u %9.12f\n", cur_best_u);
+	//printf("cur_best_d %9.12f\n", cur_best_d);
+	//printf("cur_best_r %9.12f\n", cur_best_r); 
+        //printf("u_learning_rate %9.12f\n", u_learning_rate);
+	//printf("d_learning_rate %9.12f\n", d_learning_rate);
+	//printf("r_learning_rate %9.12f\n", r_learning_rate);
+        count += 7;
     }
     return count;
 }
@@ -156,21 +151,35 @@ int main(int argc, char** argv)
     CudaModel model = CudaModel(2000.0);
     t = clock();
     printf("start calculation\n");
+    /*double s[10] = {2031.38,
+	2030.57,
+	2019.02,
+	2050.29,
+	2075.91,
+	2071.16,
+	2064.45,
+	2086.86,
+	2089.99,
+	2084.58};*/
     double s[10] = {1921.42, 1948.51, 1987.89, 1981.01, 1991.76, 2012.74, 2014.54, 2016.16, 2003.02, 1992.73};
     double v[10] = {36.9, 39.6, 59.3, 56.5, 59.95, 70.05, 70.0, 67.3, 62.2, 57.4};
-    //int len = sizeof(s) / sizeof(double);
-    double u = 1.003080749240, d = 0.996572266501, r = 0;
-    double epsilon = 5.0;
+    /*double v[10] = {69.6,
+	71.55,
+	66.2,
+	86.9,
+	102.3,
+	100,
+	95.42,
+	104.6,
+	110,
+	110.95};*/
+    double u = 1.001, d = 0.999, r = 0.00002;
+    double epsilon = 4.5;
     int len = 10;
     int count = training(model, u, d, r, s, v, epsilon, len);
-    printf("count %d\n", count);
-    //printf("u %f\n", u);
-    //printf("d %f\n", d);
-    //printf("r %f\n", r);
-    //double result = model.calculate(1.23, .89, 0.03, 3);
+    //printf("count %d\n", count);
     t = clock() - t;
     printf("1 time calculation %f milliseconds \n" ,((double)t)/(CLOCKS_PER_SEC/1000));
-    //printf(" result = %f \n", result);
     return 0;
 }
 
