@@ -80,7 +80,7 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
 	//printf("--------------------------\n");
         double derivative_u = derivative_cal(model, u, d, r, u_step, u_step, 0, 0, s, v, len);
         double derivative_d = derivative_cal(model, u, d, r, d_step, 0, d_step, 0, s, v, len);
-       // double derivative_r = derivative_cal(model, u, d, r, r_step, 0, 0, r_step, s, v, len);
+        double derivative_r = derivative_cal(model, u, d, r, r_step, 0, 0, r_step, s, v, len);
        	//printf("derivative_u %9.12f\n", derivative_u);
        	//printf("derivative_d %9.12f\n", derivative_d);
 	//printf("derivative_r %9.12f\n", derivative_r);	
@@ -105,10 +105,10 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
         double d_cur_step = d_cal_step > 0 ? std::min(d_cal_step, d_cur_step_limit) : std::max(d_cal_step, -d_cur_step_limit);
         d -= d_cur_step;
 
-	//double r_cal_step = r_learning_rate * derivative_r;
-	//double r_cur_step_limit = r_step_limit(error, r_step);
-        //double r_cur_step = r_cal_step > 0 ? std::min(r_cal_step, r_cur_step_limit) : std::max(r_cal_step, -r_cur_step_limit);
-        //r -= r_cur_step;
+	double r_cal_step = r_learning_rate * derivative_r;
+	double r_cur_step_limit = r_step_limit(error, r_step);
+        double r_cur_step = r_cal_step > 0 ? std::min(r_cal_step, r_cur_step_limit) : std::max(r_cal_step, -r_cur_step_limit);
+        r -= r_cur_step;
         //max limimt
         /*
         if(d >= 1.0) {
@@ -131,7 +131,7 @@ int training(CudaModel &model, double &u, double &d, double &r, double *s, doubl
 	}
         u_learning_rate = training_learing_rate(error, derivative_u);
         d_learning_rate = training_learing_rate(error, derivative_d);
-        //r_learning_rate = training_learing_rate(error, derivative_r);
+        r_learning_rate = training_learing_rate(error, derivative_r);
         printf("%9.12f\n", error);
 	//printf("cur_best_error %9.12f\n", cur_best_error);
 	//printf("cur_best_u %9.12f\n", cur_best_u);
@@ -173,7 +173,7 @@ int main(int argc, char** argv)
 	104.6,
 	110,
 	110.95};*/
-    double u = 1.001, d = 0.999, r = 0.00000;
+    double u = 1.001, d = 0.999, r = 0.00002;
     double epsilon = 4;
     int len = 10;
     int count = training(model, u, d, r, s, v, epsilon, len);
