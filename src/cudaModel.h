@@ -3,7 +3,7 @@
 
 #define MAXLEVEL 600
 #define BUFSIZE (MAXLEVEL+1)*(MAXLEVEL+2)/2
-#define MAXLENGTH 20
+#define MAXLENGTH 40
 #define THREAD_PER_BLOCK 128
 
 /////////// KERNEL ////////////
