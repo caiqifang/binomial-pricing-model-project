@@ -1,3 +1,6 @@
+# 15-418/ 618 Final Project
+Contributor: Qifang Cai, Xiqiao Shan
+
 model_s.h    |
 model_s.cpp  | -> class object of sequantial binomial model
 
@@ -7,7 +10,13 @@ Makefile | -> compile file
 
 main.cpp | -> main
 
+main_exp.cpp | -> sequential model main function
+
 cudaModel.h   |
-cudaModel.cu  |-> cuda implementation
+cudaModel.cu  | -> cuda implementation
+
+Makefile | -> compile file
+
+README | -> this file
 
 

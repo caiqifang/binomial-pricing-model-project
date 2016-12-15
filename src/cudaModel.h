@@ -19,6 +19,7 @@
 
 class CudaModel
 {
+    // class data field
     private:
         double strike;
         double  device_p;
