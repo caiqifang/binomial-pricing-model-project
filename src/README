@@ -8,9 +8,9 @@ README | -> this file
 
 Makefile | -> compile file
 
-main.cpp | -> main
+main.cpp | -> main file with parameters training and parallel CUDA model
 
-main_exp.cpp | -> sequential model main function
+main_exp.cpp | -> sequential model main function used only for development
 
 cudaModel.h   |
 cudaModel.cu  | -> cuda implementation

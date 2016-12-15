@@ -7,6 +7,7 @@
 #include "cudaModel.h"
 #include "model_s.h"
 
+//this is an experimental main file used to generate data for graphs of our report
 int main(int argc, char** argv)
 {
     clock_t t;
